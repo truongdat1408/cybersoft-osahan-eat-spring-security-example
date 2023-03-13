@@ -16,6 +16,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -24,6 +25,9 @@ public class CustomConfigSecurity {
 
     @Autowired
     private CustomAuthenticationProvider authProvider;
+
+    @Autowired
+    private AuthTokenFilter authTokenFilter;
 
     @Bean
     public AuthenticationManager authManager(HttpSecurity http) throws Exception {
@@ -41,10 +45,14 @@ public class CustomConfigSecurity {
                 .authorizeRequests()
                     .antMatchers("/login/signin")
                     .permitAll()
+                    .antMatchers("/menu/files/**")
+                    .permitAll()
                     .anyRequest()
-                    .authenticated()
-                .and()
-                .httpBasic();
+                    .authenticated();
+//                .and()
+//                .httpBasic(); --> Khong su dung nua
+        //Kiem tra filter token truoc
+        http.addFilterBefore(authTokenFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 
