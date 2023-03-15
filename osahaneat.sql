@@ -120,4 +120,6 @@ create table rating_restaurant(
     constraint FK_rating_res_res_id foreign key(res_id) references restaurant(id)
 );
 
+alter table food add column iamge varchar(255);
+alter table food rename column iamge to image;
 

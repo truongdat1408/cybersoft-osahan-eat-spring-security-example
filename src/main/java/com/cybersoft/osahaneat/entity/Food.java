@@ -19,6 +19,12 @@ public class Food {
     @Column(name = "instruction")
     private String intruction;
 
+    @Column(name = "image")
+    private String image;
+
+    @Column(name = "description")
+    private String desc;
+
     @ManyToOne
     @JoinColumn(name = "cate_res_id")
     private CategoryRestaurant categoryRestaurant;
@@ -28,6 +34,22 @@ public class Food {
 
     @OneToMany(mappedBy = "food")
     private Set<RatingFood> listratingFood;
+
+    public String getDesc() {
+        return desc;
+    }
+
+    public void setDesc(String desc) {
+        this.desc = desc;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
 
     public Set<RatingFood> getListratingFood() {
         return listratingFood;
