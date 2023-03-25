@@ -1,13 +1,12 @@
 package com.cybersoft.osahaneat.controller;
 
 import com.cybersoft.osahaneat.payload.ResponseData;
-import com.cybersoft.osahaneat.service.FileStorageService;
-import com.cybersoft.osahaneat.service.MenuService;
 import com.cybersoft.osahaneat.service.imp.FileStorageServiceImp;
 import com.cybersoft.osahaneat.service.imp.MenuServiceImp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.core.io.Resource;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +16,9 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 @RequestMapping("/menu")
 public class MenuController {
+    @Autowired
+    RedisTemplate redisTemplate;
+
     @Autowired
     MenuServiceImp menuService;
 
@@ -42,7 +44,6 @@ public class MenuController {
     }
 
     @GetMapping("")
-    @Cacheable("food")
     public ResponseEntity<?> getAllMenu() {
         //Đánh index trong database -> insert dữ liệu lâu
         ResponseData responseData = new ResponseData();

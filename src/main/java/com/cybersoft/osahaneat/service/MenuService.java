@@ -5,8 +5,11 @@ import com.cybersoft.osahaneat.entity.CategoryRestaurant;
 import com.cybersoft.osahaneat.entity.Food;
 import com.cybersoft.osahaneat.repository.FoodRepository;
 import com.cybersoft.osahaneat.service.imp.MenuServiceImp;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -15,6 +18,9 @@ import java.util.List;
 
 @Service
 public class MenuService implements MenuServiceImp {
+    @Autowired
+    RedisTemplate redisTemplate;
+
     @Autowired
     FoodRepository foodRepository;
 
@@ -58,17 +64,29 @@ public class MenuService implements MenuServiceImp {
     }
 
     @Override
+//    @Cacheable("food")
     public List<FoodDto> getAllFood() {
-        List<Food> list = foodRepository.findAll();
+        List<Food> list;
         List<FoodDto> dtoList = new ArrayList<>();
-        for (Food food : list) {
-            FoodDto foodDto = new FoodDto();
-            foodDto.setImage(food.getImage());
-            foodDto.setName(food.getName());
-            foodDto.setDesc(food.getDesc());
+        Gson gson = new Gson();
 
-            dtoList.add(foodDto);
+        String data = (String) redisTemplate.opsForValue().get("foods");
+        if (data == null) {
+            list = foodRepository.findAll();
+            for (Food food : list) {
+                FoodDto foodDto = new FoodDto();
+                foodDto.setImage(food.getImage());
+                foodDto.setName(food.getName());
+                foodDto.setDesc(food.getDesc());
+
+                dtoList.add(foodDto);
+            }
+            redisTemplate.opsForValue().set("foods", gson.toJson(dtoList));
+        }else {
+            dtoList = gson.fromJson(data, new TypeToken<List<FoodDto>>(){}.getType());
         }
+        System.out.println("Redis: " + data);
+
         return dtoList;
     }
 }

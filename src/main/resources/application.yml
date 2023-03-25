@@ -16,9 +16,23 @@ spring:
     multipart:
       max-file-size: 1MB
       max-request-size: 10MB
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
 
 jwt:
   privateKey: ek2uC2CrSsl+3hTkxrcz30nPFQbtf/4b5juFQO5WzSI=
 
 upload:
   path: uploads
+
+redis:
+  host: localhost
+  port: 6380
+
+rabbitmq:
+  queue: demorabbitmq
+  exchange: demoexchange
+  routingKey: demo_routing_key
